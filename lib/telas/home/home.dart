@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import '../../modelos/receita.dart';
+
 
 
 class Home extends StatefulWidget {
@@ -19,13 +21,34 @@ class HomeState extends State<Home> {
   Widget _construirHome() {
 
     return Scaffold(
-        body: _construirCard(),
+        body: _contruirListaCard(),
         appBar: _construirAppBar(),
       );
     
   }
 
-  Widget _construirCard() {
+  Widget _contruirListaCard() {
+    return FutureBuilder(
+      future: DefaultAssetBundle
+        .of(context)
+        .loadString('assets/receitas.json'),
+      builder: (context, snapshot) {
+        List<dynamic> receitas = json.decode(snapshot.data.toString());
+
+        return ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            Receita receita = Receita.fromJson(receitas[index]);
+
+            return _construirCard(receita.titulo, receita.foto);
+          },
+            itemCount: receitas == null ? 0 : receitas.length,
+          );
+      }
+
+    );
+  }
+
+  Widget _construirCard(titulo, foto) {
     return SizedBox(
           height: 300,
           child: Card(
@@ -33,8 +56,8 @@ class HomeState extends State<Home> {
           child: Column(children: [
             Stack(
               children: <Widget>[
-                _construirImagemCard(),
-                _construirTextoCard()
+                _construirImagemCard(foto),
+                _construirTextoCard(titulo)
               ]
             )
           ],)
@@ -42,17 +65,17 @@ class HomeState extends State<Home> {
         );
   }
 
-  Widget _construirTextoCard() {
+  Widget _construirTextoCard(titulo) {
     return Positioned(
       bottom: 10,
       left: 10,
-      child: Text('Bolo de Laranja', style: TextStyle(fontSize: 20))
+      child: Text(titulo, style: TextStyle(fontSize: 20))
     );
   }
 
-  Widget _construirImagemCard() {
-    return Image.network(
-      'https://img.itdg.com.br/tdg/images/recipes/000/110/765/102462/102462_original.jpg', 
+  Widget _construirImagemCard(foto) {
+    return Image.asset(
+      foto, 
       fit: BoxFit.fill, 
       height: 268,
     );
