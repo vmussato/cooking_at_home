@@ -1,3 +1,4 @@
+import 'package:cozinhando_casa/telas/detalhes/detalhes.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import '../../modelos/receita.dart';
@@ -49,11 +50,17 @@ class HomeState extends State<Home> {
   }
 
   Widget _construirCard(titulo, foto) {
-    return SizedBox(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) => Detalhes()
+        ));
+      },
+      child: SizedBox(
           height: 300,
           child: Card(
             margin: EdgeInsets.all(16),
-          child: Column(children: [
+            child: Column(children: [
             Stack(
               children: <Widget>[
                 _construirImagemCard(foto),
@@ -63,7 +70,8 @@ class HomeState extends State<Home> {
             )
           ],)
         )
-        );
+        ),
+    );
   }
 
   Widget _construirTextoCard(titulo) {
